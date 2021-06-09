@@ -65,3 +65,7 @@
 .border {
     box-shadow: 0 0 3px black;
 }
+
+.proposition {
+    background-color: rgb(186, 206, 243);
+}
