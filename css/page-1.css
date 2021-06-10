@@ -49,3 +49,7 @@
     padding: 5px;
     text-align: center;
 }
+
+.danger {
+    background-color: red;
+}
