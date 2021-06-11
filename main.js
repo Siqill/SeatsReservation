@@ -1,17 +1,6 @@
 "use strict";
 
-
-let request;
-let seats = [
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-];
-
+let numOfSeats = +localStorage.getItem('numOfSeats');
 
 {
     draw();
@@ -30,46 +19,95 @@ let seats = [
         message.style.top = coords.bottom + message.offsetHeight / 2 + "px";
         message.style.left = coords.left + e.target.offsetWidth / 2 - message.offsetWidth / 2 + 'px';
 
-        field.onmouseout = function () {
-            if (message) message.remove();
+        e.target.onmouseout = function () {
+            message.remove();
         };
     };
 
     field.onclick = function (e) {
-        if (!e.target.classList.contains('border')) return;
-        if (e.target.classList.contains('reserved')) return;
+        let target = e.target;
+        if (!target.classList.contains('border')) return;
+        if (target.classList.contains('reserved')) return;
 
-        // does not allow you to select more seats than you marked early
-        if (field.querySelectorAll('.selection').length == localStorage.getItem('numOfSeats')) {
-            e.target.classList.remove('selection');
+        if (field.querySelectorAll('.selection').length == numOfSeats) {
+            target.classList.remove('selection');
             return;
         }
 
-        e.target.classList.toggle('selection');
-        if (localStorage.getItem('isNeibhor') == 'true') getNeighbor(e.target);
-    };
+        if (target.classList.contains('proposition')) target.classList.remove('proposition');
 
+        target.classList.toggle('selection');
+
+        let numOfSelectSeats = field.querySelectorAll('.selection').length;
+
+        if (localStorage.getItem('isNeibhor') == 'true') {
+            //if (!target.classList.contains('selection')) return;
+
+            if (numOfSelectSeats == numOfSeats || numOfSelectSeats == 0) {
+                field.querySelectorAll('.proposition').forEach(node => {
+                    node.classList.remove('proposition');
+                });
+            }
+            else {
+                highlightNeighbor(target);
+            }
+        }
+
+    };
 
     reserve.onclick = function () {
         let seats = field.querySelectorAll('.selection');
-        if (!seats.length) return;
-        let div = document.createElement('div');
-        div.className = 'container';
-        div.innerHTML = '<h2>Twoja rezerwacja przebiegła pomyślnie!</h2><br><br>Wybrałeś miejsca:<br>';
-        for (let seat of seats) {
-            div.innerHTML += `- rząd ${seat.dataset.y}, miejsce ${seat.dataset.x} (${seat.id})<br>`;
-            seat.classList.add('reserved');
-            seat.classList.remove('selection');
-        }
-        div.innerHTML += '<br><br><h3>Dziękujemy! W razie problemów prosimy o kontakt z działem administracji.</h3>';
-        document.body.innerHTML = "";
-        document.body.append(div);
 
+        if (!seats.length) return;
+        else {
+            if (seats.length != numOfSeats) {
+                let text = `Chciales kupic ${numOfSeats} bilety, ale zaznaczyles tylko ${seats.length}, contynujemy?`;
+                if (!confirm(text)) return;
+            }
+            let div = document.createElement('div');
+            div.className = 'container';
+            div.innerHTML = '<h2>Twoja rezerwacja przebiegła pomyślnie!</h2><br><br>Wybrałeś miejsca:<br>';
+            for (let seat of seats) {
+                div.innerHTML += `- rząd ${seat.dataset.y}, miejsce ${seat.dataset.x} (${seat.id})<br>`;
+                seat.classList.add('reserved');
+                seat.classList.remove('selection');
+            }
+            div.innerHTML += '<br><br><h3>Dziękujemy! W razie problemów prosimy o kontakt z działem administracji.</h3>';
+            document.body.innerHTML = "";
+            document.body.append(div);
+        }
     };
 }
 
-// Błąd w db.json dlatego tak maluje miejsca
+
+function highlightNeighbor(elem) {
+    let x = +elem.dataset.x;
+    let y = +elem.dataset.y;
+
+    let next = field.querySelector(`.border[data-x="${x + 1}"][data-y="${y}"]`);
+    let previous = field.querySelector(`.border[data-x="${x - 1}"][data-y="${y}"]`);
+
+    if (next) {
+        if (!next.classList.contains('reserved') && !next.classList.contains('selection'))
+            next.classList.add('proposition');
+    }
+
+    if (previous)
+        if (!previous.classList.contains('reserved') && !previous.classList.contains('selection'))
+            previous.classList.add('proposition');
+
+}
+
 function draw() {
+    let seats = [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    ];
     let out = '';
     for (let i = 0; i < seats.length; i++) {
         let arr = seats[i];
@@ -80,52 +118,24 @@ function draw() {
     }
     document.querySelector('#field').innerHTML = out;
 
-    getRequest();
 
-    request.onload = function () {
-        let data = JSON.parse(request.response);
-        for (let seat of data) {
-            let x = seat.cords.x;
-            let y = seat.cords.y;
-            for (let node of document.querySelectorAll('.field-block')) {
-                if (node.dataset.x == y && node.dataset.y == x) {
-                    node.id = seat.id;
-                    node.classList.add('border');
+    fetch('http://localhost:3000/seats')
+        .then(response => response.json())
+        .then(response => {
+            for (let seat of response) {
+                let x = seat.cords.x;
+                let y = seat.cords.y;
+                let square = document.querySelector(`.field-block[data-x="${y}"][data-y="${x}"]`);
+                if (square) {
+                    square.id = seat.id;
+                    square.classList.add('border');
                     if (seat.reserved)
-                        node.classList.add('reserved');
+                        square.classList.add('reserved');
                 }
-
             }
-        }
-    }
-
-
-
-
-
-
-
-
+        })
+        .catch(() => {
+            document.body.innerHTML = 'Bad connevtion with server';
+        })
 
 }
-
-function getRequest() {
-    request = new XMLHttpRequest();
-    request.open('GET', 'http://localhost:3000/seats');
-    request.send();
-}
-
-function getNeighbor(elem) {
-    let x = +elem.dataset.x;
-    let y = +elem.dataset.y;
-    let next = field.querySelector(`.border[data-x="${x + 1}"][data-y="${y}"]`);
-    let previous = field.querySelector(`.border[data-x="${x - 1}"][data-y="${y}"]`);
-    if (next && !next.classList.contains('reserved')) {
-        next.classList.toggle('proposition');
-    }
-    if (previous && !previous.classList.contains('reserved')) {
-        previous.classList.toggle('proposition');
-    }
-
-}
-
