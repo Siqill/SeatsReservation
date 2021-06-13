@@ -1,45 +1,54 @@
+* {
+    margin: 0;
+    padding: 0;
+}
 
-.main-div {
+html, body {
     width: 100%;
     height: 100%;
-    position: fixed;
-    top: 0;
-    left: 0;
+}
+
+.outer {
     display: flex;
+    justify-content: center;
     align-items: center;
-    justify-content: center; 
-    overflow: auto;   
-    line-height: 40px;
+    height: 100%;
+}
+
+.row-first {
+    height: 3em;
+    line-height: 3em;
 }
 
 
-.div1 {
-    position: relative;
-    margin-bottom: 5px;
-}
-
-.div1 input {
+.row-first input {
     float: right;
-    width: 7em;
-    height: 2.5em;
+    padding-left: 2px;
+    width: 9em;
+    height: 70%;
+    transform: translate(0, 15%);
 }
 
-.div2 input {
-    margin-left: 0;
-    margin-right: 10px;
+.row-second {
+    height: 4em;
+    line-height: 3.5em;
 }
 
-.div3 {
-    text-align: center;
+.row-second input {
+    transform: scale(1.4);
+    margin-right: 15px;
 }
 
-.div3 button {
-    height: 40px;
-    margin-top: 10px;
+.row-third {
+    height: 3em;
+}
+
+.row-third button {
     background-color: white;
-    width: 100%;
     border: 1px solid black;
     cursor: pointer;
+    width: 100%;
+    height: 100%;
 }
 
 .tip {

@@ -5,7 +5,7 @@ let div;
 submit.onclick = function (e) {
     if (seats.classList.contains('danger')) {
         e.preventDefault();
-        alert('Błąd! Prosimy o wpisanie dodatniej liczby miejsc do rezerwacji');
+        alert('Błąd! Proszę o wpisanie dodatniej liczby miejsc do rezerwacji');
         seats.focus();
     }
     else {

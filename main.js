@@ -3,6 +3,7 @@
 let numOfSeats = +localStorage.getItem('numOfSeats');
 
 {
+    
     draw();
 
     //prevents selection
@@ -58,7 +59,10 @@ let numOfSeats = +localStorage.getItem('numOfSeats');
     reserve.onclick = function () {
         let seats = field.querySelectorAll('.selection');
 
-        if (!seats.length) return;
+        if (!seats.length) {
+            alert('Proszę wybrać mejsce');
+            return;
+        }
         else {
             if (seats.length != numOfSeats) {
                 let text = `Chciales kupic ${numOfSeats} bilety, ale zaznaczyles tylko ${seats.length}, contynujemy?`;
@@ -77,6 +81,7 @@ let numOfSeats = +localStorage.getItem('numOfSeats');
             document.body.append(div);
         }
     };
+
 }
 
 
