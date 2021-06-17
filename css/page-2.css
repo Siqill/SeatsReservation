@@ -3,22 +3,23 @@
     padding: 0;
 }
 
+html, body {
+    height: 100%;
+    width: 100%;
+}
 .container {
-    margin: 10px 0 0 10px;
     position: absolute;
-    height: 100vh;
 }
 
 #field {
-    position: relative;
     display: inline-block;
 }
 
 .field-block {
     margin: 0.4em;
     float: left;
-    width: 3em;
-    height: 3em;
+    width: 3.3em;
+    height: 3.3em;
 }
 
 .footer {

@@ -3,10 +3,8 @@
 let numOfSeats = +localStorage.getItem('numOfSeats');
 
 {
-    
     draw();
 
-    //prevents selection
     document.querySelector('.container').onmousedown = function () { return false; };
 
     field.onmouseover = function (e) {
@@ -30,28 +28,29 @@ let numOfSeats = +localStorage.getItem('numOfSeats');
         if (!target.classList.contains('border')) return;
         if (target.classList.contains('reserved')) return;
 
-        if (field.querySelectorAll('.selection').length == numOfSeats) {
+        target.classList.toggle('selection');
+        let selectSeats = field.querySelectorAll('.selection');
+        let numOfSelectSeats = selectSeats.length;
+
+
+        if (numOfSelectSeats > numOfSeats) {
             target.classList.remove('selection');
             return;
         }
 
+
         if (target.classList.contains('proposition')) target.classList.remove('proposition');
 
-        target.classList.toggle('selection');
-
-        let numOfSelectSeats = field.querySelectorAll('.selection').length;
-
         if (localStorage.getItem('isNeibhor') == 'true') {
-            //if (!target.classList.contains('selection')) return;
 
-            if (numOfSelectSeats == numOfSeats || numOfSelectSeats == 0) {
-                field.querySelectorAll('.proposition').forEach(node => {
-                    node.classList.remove('proposition');
-                });
-            }
-            else {
-                highlightNeighbor(target);
-            }
+            field.querySelectorAll('.proposition').forEach(node => {
+                node.classList.remove('proposition');
+            });
+
+            if (numOfSelectSeats == numOfSeats || numOfSelectSeats == 0)
+                return;
+
+            highlightNeighbor(selectSeats);
         }
 
     };
@@ -73,33 +72,37 @@ let numOfSeats = +localStorage.getItem('numOfSeats');
             div.innerHTML = '<h2>Twoja rezerwacja przebiegła pomyślnie!</h2><br><br>Wybrałeś miejsca:<br>';
             for (let seat of seats) {
                 div.innerHTML += `- rząd ${seat.dataset.y}, miejsce ${seat.dataset.x} (${seat.id})<br>`;
-                seat.classList.add('reserved');
                 seat.classList.remove('selection');
             }
             div.innerHTML += '<br><br><h3>Dziękujemy! W razie problemów prosimy o kontakt z działem administracji.</h3>';
             document.body.innerHTML = "";
             document.body.append(div);
+            
+            // updateDate('http://127.0.0.1:3000/seats', seats);
         }
     };
 
 }
 
 
-function highlightNeighbor(elem) {
-    let x = +elem.dataset.x;
-    let y = +elem.dataset.y;
+function highlightNeighbor(seats) {
+    for (let seat of seats) {
+        let x = +seat.dataset.x;
+        let y = +seat.dataset.y;
+        let next = field.querySelector(`.border[data-x="${x + 1}"][data-y="${y}"]`);
+        let previous = field.querySelector(`.border[data-x="${x - 1}"][data-y="${y}"]`);
 
-    let next = field.querySelector(`.border[data-x="${x + 1}"][data-y="${y}"]`);
-    let previous = field.querySelector(`.border[data-x="${x - 1}"][data-y="${y}"]`);
+        if (next) {
+            if (!next.classList.contains('reserved') && !next.classList.contains('selection'))
+                next.classList.add('proposition');
+        }
 
-    if (next) {
-        if (!next.classList.contains('reserved') && !next.classList.contains('selection'))
-            next.classList.add('proposition');
+        if (previous) {
+            if (!previous.classList.contains('reserved') && !previous.classList.contains('selection'))
+                previous.classList.add('proposition');
+        }
+
     }
-
-    if (previous)
-        if (!previous.classList.contains('reserved') && !previous.classList.contains('selection'))
-            previous.classList.add('proposition');
 
 }
 
@@ -144,3 +147,27 @@ function draw() {
         })
 
 }
+
+// async function updateDate(url, seats) {
+//     let data;
+//     await fetch(url)
+//     .then(res => res.json())
+//     .then(res => {
+//         for (let seat of seats) {
+//         console.log(seat)
+//         let x = +seat.dataset.x;
+//         let y = +seat.dataset.y;
+//         res.find(value => value.cords.x == y && value.cords.y == x).reserved == true;
+//         }
+//         data = res;
+//     })
+//     .catch(err => alert(err))
+
+//     await fetch(url, {
+//         method: 'PUT',
+//         headers: {
+//             'Content-Type': 'application/json'
+//         },
+//         body: JSON.stringify(data),
+//     })
+// }
