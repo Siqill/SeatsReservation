@@ -9,22 +9,23 @@
 </head>
 
 <body>
-
-    <div class="outer">
-        <form action="./main-page.html" id="form">
-            <div class="row-first">
+    <div class="container">
+        <form action="main-page.html" id="form">
+            <div class="row">
                 <span>Liczba miejsc:</span><input type="text" name="seats" id="seats">
             </div>
-            <div class="row-second">
+            <div class="row">
                 <input type="checkbox" name="neighbor" id="neighbor"><span>Czy miejsca mają być obok siebie?</span>
             </div>
-            <div class="row-third">
+            <div>
                 <button type="submit" id="submit">Wybierz miejsca</button>
             </div>
         </form>
     </div>
 
-    <script src="index.js"></script>
+    <!-- -------------------- -->
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script src="js/index.js"></script>
 </body>
 
 </html>

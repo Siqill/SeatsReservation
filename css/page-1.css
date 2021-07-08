@@ -4,61 +4,53 @@
 }
 
 html, body {
-    width: 100%;
     height: 100%;
 }
 
-.outer {
+.container {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100%;
 }
 
-.row-first {
+.row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     height: 3em;
     line-height: 3em;
+    margin: 10px 0;
 }
 
-
-.row-first input {
-    float: right;
-    padding-left: 2px;
-    width: 9em;
-    height: 70%;
-    transform: translate(0, 15%);
+#seats {
+    margin-left: 10px;
+    line-height: 2.5em;
+    
 }
 
-.row-second {
-    height: 4em;
-    line-height: 3.5em;
-}
-
-.row-second input {
+#neighbor {
     transform: scale(1.4);
-    margin-right: 15px;
 }
 
-.row-third {
-    height: 3em;
-}
-
-.row-third button {
+#submit {
     background-color: white;
     border: 1px solid black;
     cursor: pointer;
     width: 100%;
-    height: 100%;
+    height: 3.5em;
 }
 
 .tip {
     position: absolute;
     background-color: floralwhite;
-    box-shadow: 0 0 2px black;
+    box-shadow: 0 0 3px black;
     padding: 5px;
     text-align: center;
 }
 
 .danger {
+    text-align: center;
     background-color: red;
+    color: white;
 }

@@ -3,23 +3,21 @@
     padding: 0;
 }
 
-html, body {
-    height: 100%;
-    width: 100%;
-}
 .container {
-    position: absolute;
+    max-width: max-content;
+    margin: 0 auto;
+    padding: 10px;
 }
 
 #field {
-    display: inline-block;
+    display: table;
 }
 
 .field-block {
     margin: 0.4em;
     float: left;
-    width: 3.3em;
-    height: 3.3em;
+    width: 3em;
+    height: 3em;
 }
 
 .footer {
@@ -39,7 +37,7 @@ html, body {
 }
 
 .group {
-    display: inline-flex;
+    display: flex;
 }
 
 .group span {
