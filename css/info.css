@@ -1,0 +1,28 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    text-align: center;
+    font-size: 1.5em;
+}
+
+.container a {
+    text-transform: uppercase;
+    margin-top: 1em;
+    color: rgb(100, 100, 255);
+    text-decoration: none;
+}
+
+.container a:hover {
+    color: blue;
+}
+
+.seats span, .container a {
+    display: block;
+}
+
+.container h2, .seats span {
+    margin: 20px 0;
+}

@@ -1,5 +1,7 @@
 "use strict";
 
+import {request} from './export.js'
+
 let numOfSeats = +getInfo(location.href).seats;
 let neighborChecked = getInfo(location.href).neighbor;
 
@@ -20,18 +22,15 @@ $(function () {
                 let text = `Chciales kupic ${numOfSeats} bilety, ale zaznaczyles tylko ${seats.length}, contynujemy?`;
                 if (!confirm(text)) return;
             }
-    
-            updateData(seats);
-
-            let text = '<h2>Twoja rezerwacja przebiegła pomyślnie!</h2><br><br>Wybrałeś miejsca:<br>';
+        
+            let text = '?';
             $(seats).each(function () {
-                text += `- rząd ${$(this).attr('data-y')}, miejsce ${$(this).attr('data-x')} (${$(this).attr('id')})<br>`;
-                $(this).removeClass('selection');
-            })
-            text += '<br><br><h3>Dziękujemy! W razie problemów prosimy o kontakt z działem administracji.</h3>';
-            $('body').html(
-                $('<div>').html(text),
-            )
+                text += this.id + '&';
+            });
+            text = text.substr(0, text.length - 1);
+            updateData(seats);
+            
+            location.href = 'http://127.0.0.1:8080/info.html' + text;
         }
     });
 
@@ -146,16 +145,6 @@ function getInfo(str) {
         "seats": arr[0].split('=').pop(),
         "neighbor": arr[1] ? arr[1].split('=').pop() : "",
     }
-}
-
-function request(url, method = "GET", body = null) {
-    return fetch(url, {
-        method,
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body
-    });
 }
 
 function updateData(seats) {

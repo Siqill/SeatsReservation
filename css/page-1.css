@@ -1,6 +1,7 @@
 * {
     margin: 0;
     padding: 0;
+    
 }
 
 html, body {
@@ -44,7 +45,7 @@ form {
     cursor: pointer;
     width: 100%;
     height: 3.5em;
-    transition: all 0.5s ease-out;
+    transition: all 0.2s ease-out;
 }
 
 #submit:hover {
