@@ -1,55 +1,13 @@
 "use strict";
 
-let numOfSeats = +localStorage.getItem('numOfSeats');
+let numOfSeats = +getInfo(location.href).seats;
+let neighborChecked = getInfo(location.href).neighbor;
+
 
 $(function () {
     draw();
+
     $('body').mousedown(function () { return false; });
-
-    $(field).mouseover(function (e) {
-        if ($(e.target).hasClass('border')) {
-            let coords = e.target.getBoundingClientRect();
-            $('body').append(
-                $('<div>').addClass('message').text(`rzad:${e.target.dataset.y}, meijsce:${e.target.dataset.x}`),
-            );
-
-            $('.message').css({
-                top: coords.bottom + $('.message').outerHeight() / 2,
-                left: coords.left - $('.message').outerWidth() / 2 + $(e.target).outerWidth() / 2
-            });
-
-            $(this).mouseout(function () {
-                $('.message').remove();
-            });
-        }
-    });
-
-    $(field).click(function (e) {
-        const target = e.target;
-        if ($(target).hasClass('reserved')) return;
-        if (!$(target).hasClass('border')) return;
-
-        $(target).toggleClass('selection');
-
-        let numOfSelectSeats = $('#field .selection').length;
-
-        if (numOfSelectSeats > numOfSeats) {
-            $(target).removeClass('selection');
-            return;
-        }
-        if ($(target).hasClass('proposition')) $(target).removeClass('proposition');
-
-        if (localStorage.getItem('isNeibhor') == 'true') {
-            $('.proposition').each(function () {
-                $(this).removeClass('proposition');
-            });
-
-            if (numOfSelectSeats == numOfSeats || numOfSelectSeats == 0) return;
-
-            highlightNeighbor($('#field .selection'));
-        }
-
-    });
 
     $(reserve).click(function () {
         let seats = $('#field .selection');
@@ -62,19 +20,21 @@ $(function () {
                 let text = `Chciales kupic ${numOfSeats} bilety, ale zaznaczyles tylko ${seats.length}, contynujemy?`;
                 if (!confirm(text)) return;
             }
+    
+            updateData(seats);
 
             let text = '<h2>Twoja rezerwacja przebiegła pomyślnie!</h2><br><br>Wybrałeś miejsca:<br>';
             $(seats).each(function () {
-                debugger
                 text += `- rząd ${$(this).attr('data-y')}, miejsce ${$(this).attr('data-x')} (${$(this).attr('id')})<br>`;
                 $(this).removeClass('selection');
             })
             text += '<br><br><h3>Dziękujemy! W razie problemów prosimy o kontakt z działem administracji.</h3>';
             $('body').html(
-                $('<div>').addClass('container').html(text),
+                $('<div>').html(text),
             )
         }
     });
+
 });
 
 // --------------------------------------
@@ -99,7 +59,7 @@ function highlightNeighbor(seats) {
     });
 }
 
-function draw() {
+async function draw() {
     let seats = [
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -119,7 +79,7 @@ function draw() {
     }
     $(field).html(out);
 
-    request('http://localhost:3000/seats')
+    await request('http://localhost:3000/seats')
         .then(response => response.json())
         .then(response => {
             $(response).each(function () {
@@ -137,15 +97,76 @@ function draw() {
         .catch(() => {
             $('body').html('Bad connevtion with server');
         });
+
+    $('#field .border').each(function () {
+        $(this).hover(function (e) {
+            let coords = e.target.getBoundingClientRect();
+            $('body').append(
+                $('<div>').addClass('message').text(`rzad:${e.target.dataset.y}, meijsce:${e.target.dataset.x}`),
+            );
+
+            $('.message').css({
+                top: coords.bottom + $('.message').outerHeight() / 2,
+                left: coords.left - $('.message').outerWidth() / 2 + $(e.target).outerWidth() / 2
+            });
+        }, function () {
+            $('.message').remove();
+        }
+        );
+    })
+        .click(function (e) {
+            const target = e.target;
+            if ($(target).hasClass('reserved')) return;
+
+            $(target).toggleClass('selection');
+
+            let numOfSelectSeats = $('#field .selection').length;
+
+            if (numOfSelectSeats > numOfSeats) {
+                $(target).removeClass('selection');
+                return;
+            }
+            if ($(target).hasClass('proposition')) $(target).removeClass('proposition');
+
+            if (neighborChecked == 'on') {
+                $('.proposition').each(function () {
+                    $(this).removeClass('proposition');
+                });
+
+                if (numOfSelectSeats == numOfSeats || numOfSelectSeats == 0) return;
+
+                highlightNeighbor($('#field .selection'));
+            }
+        });
 }
 
+function getInfo(str) {
+    let arr = str.split('?').pop().split('&');
+    return {
+        "seats": arr[0].split('=').pop(),
+        "neighbor": arr[1] ? arr[1].split('=').pop() : "",
+    }
+}
 
-async function request(url, method = "GET", body = null) {
-    return await fetch(url, {
+function request(url, method = "GET", body = null) {
+    return fetch(url, {
         method,
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
         },
         body
     });
+}
+
+function updateData(seats) {
+    for (let seat of seats) {
+        request('http://localhost:3000/seats/' + seat.id, 'put', JSON.stringify({
+            "id": seat.id,
+            "cords": {
+                "x": +seat.dataset.y,
+                "y": +seat.dataset.x
+            },
+            "reserved": true
+        }));
+    }
 }

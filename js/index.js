@@ -1,7 +1,7 @@
 "use strict";
 
 $(function () {
-    $(seats).focus(function () {
+    $('.seats').focus(function () {
         if ($('.tip')[0]) {
             $('.tip').remove();
         }
@@ -12,18 +12,17 @@ $(function () {
         $(this).blur(function () {
             if (+$(this).val() < 1 || Object.is(+$(this).val(), NaN)) {
                 $(this).addClass('danger');
-                $(this).val('Proszę podać liczbę');
             }
             if ($(this).hasClass('danger') || +$(this).val() < 2) {
-                $(neighbor).prop('checked', false);
+                $('.neighbor').prop('checked', false);
             }
         });
     });
 
-    $(neighbor).click(function (e) {
+    $('.neighbor').click(function (e) {
         if ($('.tip')[0]) return false;
 
-        if ($(seats).hasClass('danger') || +$(seats).val() < 2) {
+        if ($('.seats').hasClass('danger') || +$('.seats').val() < 2) {
             let coords = e.target.getBoundingClientRect();
             $('body').append(
                 $('<div>').addClass('tip').html('Jeśli chcesz wybrać tę opcję<br>zaznacz więcej niż 1 miejsce')
@@ -38,14 +37,10 @@ $(function () {
     });
 
     $(submit).click(function (e) {
-        if ($(seats).hasClass('danger') || $(seats).val() < 1) {
+        if ($('.seats').hasClass('danger') || $('.seats').val() < 1) {
             e.preventDefault();
             alert('Proszę o wpisanie dodatniej liczby miejsc do rezerwacji');
-            $(seats).focus();
-        }
-        else {
-            localStorage.setItem('numOfSeats', $(seats).val());
-            localStorage.setItem('isNeibhor', $(neighbor).prop('checked'));
+            $('.seats').focus();
         }
     });
 });
